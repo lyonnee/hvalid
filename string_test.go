@@ -9,11 +9,11 @@ import (
 func TestStringContains(t *testing.T) {
 	var s1 string = "hello,world"
 	substr := "llo"
-	err := Validat[string](s1, ContainsStr(substr))
+	err := Validate[string](s1, ContainsStr(substr))
 	assert.NoError(t, err)
 
 	var s2 string = "lyon.nee@outlook.com"
 	substr = "nee"
-	err = Validat[string](s2, ContainsStr(substr), Email())
+	err = Validate[string](s2, ContainsStr(substr), Email())
 	assert.NoError(t, err)
 }

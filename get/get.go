@@ -15,7 +15,7 @@ func get[T any](input any, validators ...hval.Validator[T]) (T, error) {
 
 	if res, ok := input.(T); ok {
 		for _, v := range validators {
-			if err := v.Validat(res); err != nil {
+			if err := v.Validate(res); err != nil {
 				return t, err
 			}
 		}
