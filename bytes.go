@@ -1,4 +1,4 @@
-package hval
+package hvalid
 
 import (
 	"bytes"

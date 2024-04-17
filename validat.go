@@ -1,4 +1,4 @@
-package hval
+package hvalid
 
 type Validator[T any] interface {
 	Validate(field T) error

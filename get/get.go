@@ -3,14 +3,14 @@ package get
 import (
 	"errors"
 
-	"github.com/lyonnee/hval"
+	"github.com/lyonnee/hvalid"
 )
 
-func Get[T any](input any, validators ...hval.Validator[T]) (T, error) {
+func Get[T any](input any, validators ...hvalid.Validator[T]) (T, error) {
 	return get[T](input, validators...)
 }
 
-func get[T any](input any, validators ...hval.Validator[T]) (T, error) {
+func get[T any](input any, validators ...hvalid.Validator[T]) (T, error) {
 	var t T
 
 	if res, ok := input.(T); ok {

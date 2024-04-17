@@ -1,4 +1,4 @@
-module github.com/lyonnee/hval
+module github.com/lyonnee/hvalid
 
 go 1.20
 
