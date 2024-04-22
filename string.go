@@ -6,28 +6,34 @@ import (
 	"strings"
 )
 
-func ContainsStr(substr string) ValidatorFunc[string] {
+func ContainsStr(substr string, errMsg ...string) ValidatorFunc[string] {
 	return ValidatorFunc[string](func(field string) error {
 		ok := strings.Contains(field, substr)
 		if !ok {
-			return errors.New("not contains substr")
+			if len(errMsg) > 0 {
+				return errors.New(errMsg[0])
+			}
+			return errors.New("not contain the sub string")
 		}
 
 		return nil
 	})
 }
 
-func Email() ValidatorFunc[string] {
+func Email(errMsg ...string) ValidatorFunc[string] {
 	return ValidatorFunc[string](func(field string) error {
-		return Regexp(`^([\w\.\_\-]{2,10})@(\w{1,}).([a-z]{2,4})$`, "Not email address")(field)
+		return Regexp(`^([\w\.\_\-]{2,10})@(\w{1,}).([a-z]{2,4})$`, errMsg...)(field)
 	})
 }
 
-func Regexp(pattern string, errMsg string) ValidatorFunc[string] {
+func Regexp(pattern string, errMsg ...string) ValidatorFunc[string] {
 	return ValidatorFunc[string](func(field string) error {
 		result, _ := regexp.MatchString(pattern, field)
 		if !result {
-			return errors.New(errMsg)
+			if len(errMsg) > 0 {
+				return errors.New(errMsg[0])
+			}
+			return errors.New("not an email address")
 		}
 		return nil
 	})

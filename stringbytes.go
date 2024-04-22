@@ -1,22 +1,30 @@
 package hvalid
 
-import "fmt"
+import (
+	"errors"
+)
 
-func MinLen[T string | []byte](minLen int) ValidatorFunc[T] {
+func MinLen[T string | []byte](minLen int, errMsg ...string) ValidatorFunc[T] {
 	return ValidatorFunc[T](func(filed T) error {
 		l := len(filed)
 		if l < minLen {
-			return fmt.Errorf("The length of the input data is too short, data len: %d, minLen: %d", l, minLen)
+			if len(errMsg) > 0 {
+				return errors.New(errMsg[0])
+			}
+			return errors.New("value length too short")
 		}
 		return nil
 	})
 }
 
-func MaxLen[T string | []byte](maxLen int) ValidatorFunc[T] {
+func MaxLen[T string | []byte](maxLen int, errMsg ...string) ValidatorFunc[T] {
 	return ValidatorFunc[T](func(filed T) error {
 		l := len(filed)
 		if l > maxLen {
-			return fmt.Errorf("The length of the input data is too long, data len: %d, maxLen: %d", l, maxLen)
+			if len(errMsg) > 0 {
+				return errors.New(errMsg[0])
+			}
+			return errors.New("value length too long")
 		}
 		return nil
 	})
