@@ -10,6 +10,9 @@
 `hvalid` 是一个用Go语言编写的轻量级验证库，它自定义验证器的接口，以及提供了一系列通用的验证函数，以帮助开发者快速实现数据验证。
 </div>
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/lyonnee/hvalid)](https://goreportcard.com/report/github.com/lyonnee/hvalid)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/lyonnee/hvalid)
+
 ## 特性
 - 支持泛型: 可以对任何类型的数据进行校验，包括基本类型、结构体、切片等。
 - 易于使用: 提供简洁的 API，方便开发者快速进行参数校验。
