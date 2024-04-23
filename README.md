@@ -12,6 +12,7 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/lyonnee/hvalid)](https://goreportcard.com/report/github.com/lyonnee/hvalid)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/lyonnee/hvalid)
+[![codecov](https://codecov.io/gh/lyonnee/hvalid/graph/badge.svg?token=2LT7V180W9)](https://codecov.io/gh/lyonnee/hvalid)
 
 ## Features
 - Generic support: Can validate any type of data, including basic types, structs, slices, etc.
