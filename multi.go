@@ -6,7 +6,7 @@ import (
 
 func Eq[T comparable](comparData T, errMsg ...string) ValidatorFunc[T] {
 	return ValidatorFunc[T](func(data T) error {
-		if data == comparData {
+		if data != comparData {
 			if len(errMsg) > 0 {
 				return errors.New(errMsg[0])
 			}

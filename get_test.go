@@ -6,10 +6,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetFunc(t *testing.T) {
+func TestGetNum(t *testing.T) {
 	var numInf interface{}
 	numInf = int(17)
-
 	_, err := Get[int](numInf, Min(18), Max(30))
 	assert.ErrorContains(t, err, "value is too small")
+
+	numInf = float32(0.12)
+	_, err = Get[float32](numInf, Min(float32(0.1)), Eq(float32(0.12)))
+	assert.NoError(t, err)
 }
