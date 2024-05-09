@@ -16,6 +16,6 @@ func TestStrBytesLen(t *testing.T) {
 	assert.NoError(t, err)
 
 	var bytes = []byte("bytes value")
-	err = Validate[[]byte](bytes, MinLen[[]byte](3), MaxLen[[]byte](10))
+	err = Validate[[]byte](bytes, MinLen[[]byte](3, "[]byte 长度太短"), MaxLen[[]byte](10))
 	assert.Error(t, err)
 }
