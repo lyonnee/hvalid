@@ -11,6 +11,10 @@ func TestStringContains(t *testing.T) {
 	substr := "llo"
 	err := Validate[string](s1, ContainsStr(substr))
 	assert.NoError(t, err)
+
+	var s2 string = "iamlyon.ne"
+	err = Validate[string](s2, ContainsStr("nee", "不包含指定字符串"))
+	assert.Error(t, err)
 }
 
 func TestIsEmail(t *testing.T) {
@@ -47,9 +51,15 @@ func TestIsIP(t *testing.T) {
 	err = Validate[string]("266.0.0.-1", IsIPv4("无效的IPv4地址"))
 	assert.Error(t, err)
 
+	err = Validate[string]("ac.0.a.-1", IsIPv4("无效的IPv4地址"))
+	assert.Error(t, err)
+
 	err = Validate[string]("FC00:0000:130F:0000:0000:09C0:876A:130B", IsIPv6())
 	assert.NoError(t, err)
 
 	err = Validate[string]("XXXX:0000:130F:0000:0000:09C0:876A:130B", IsIPv6())
+	assert.Error(t, err)
+
+	err = Validate[string]("abcf:0000:130F:efgd:0000:09C0:876A:130B", IsIPv6())
 	assert.Error(t, err)
 }

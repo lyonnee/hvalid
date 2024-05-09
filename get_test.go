@@ -20,4 +20,9 @@ func TestGetNum(t *testing.T) {
 	bytesInf = []byte("abcdefg")
 	_, err = Get[[]byte](bytesInf, ContainsBytes([]byte("cde")))
 	assert.NoError(t, err)
+
+	var strInf interface{}
+	strInf = []byte("iamlyon")
+	_, err = Get[string](strInf)
+	assert.Error(t, err)
 }
