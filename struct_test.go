@@ -24,7 +24,7 @@ func StudentValidator() ValidatorFunc[Student] {
 			return errors.New("课程成绩不能大于 100")
 		}
 
-		return Validate[string](data.Email, Email("Not email address"))
+		return Validate[string](data.Email, IsEmail("Not email address"))
 	})
 }
 
