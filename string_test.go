@@ -36,3 +36,20 @@ func TestIsUrl(t *testing.T) {
 	err = Validate[string]("https://github.com/lyonnee/hvalid", IsUrl())
 	assert.NoError(t, err)
 }
+
+func TestIsIP(t *testing.T) {
+	err := Validate[string]("192.168.0.1", IsIPv4())
+	assert.NoError(t, err)
+
+	err = Validate[string]("0.0.0.0", IsIPv4())
+	assert.NoError(t, err)
+
+	err = Validate[string]("266.0.0.-1", IsIPv4("无效的IPv4地址"))
+	assert.Error(t, err)
+
+	err = Validate[string]("FC00:0000:130F:0000:0000:09C0:876A:130B", IsIPv6())
+	assert.NoError(t, err)
+
+	err = Validate[string]("XXXX:0000:130F:0000:0000:09C0:876A:130B", IsIPv6())
+	assert.Error(t, err)
+}
