@@ -4,7 +4,13 @@ import (
 	"errors"
 )
 
-func Min[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | float32 | float64](min T, errMsg ...string) ValidatorFunc[T] {
+type number interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 |
+		~float32 | ~float64
+}
+
+func Min[T number](min T, errMsg ...string) ValidatorFunc[T] {
 	return ValidatorFunc[T](func(num T) error {
 		if num < min {
 			if len(errMsg) > 0 {
@@ -16,7 +22,7 @@ func Min[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 |
 	})
 }
 
-func Max[T int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64 | float32 | float64](max T, errMsg ...string) ValidatorFunc[T] {
+func Max[T number](max T, errMsg ...string) ValidatorFunc[T] {
 	return ValidatorFunc[T](func(num T) error {
 		if num > max {
 			if len(errMsg) > 0 {

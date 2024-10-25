@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type customInt int
+
 func TestNumberMin(t *testing.T) {
 	var n1 int = 256
 	err := Validate[int](n1, Min(1000, ""))
@@ -14,6 +16,8 @@ func TestNumberMin(t *testing.T) {
 	var n2 uint = 256
 	err = Validate[uint](n2, Min(uint(255), ""))
 	assert.NoError(t, err)
+
+	assert.Error(t, Validate[customInt](customInt(256), Min(customInt(1000), "")))
 }
 
 func TestNumberMax(t *testing.T) {
@@ -24,6 +28,8 @@ func TestNumberMax(t *testing.T) {
 	var n2 uint = 256
 	err = Validate[uint](n2, Max(uint(1000)))
 	assert.NoError(t, err)
+
+	assert.Error(t, Validate[customInt](customInt(1000), Max(customInt(256), "")))
 }
 
 func TestNumberLimit(t *testing.T) {

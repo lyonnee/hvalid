@@ -4,7 +4,7 @@ import (
 	"errors"
 )
 
-func MinLen[T string | []byte](minLen int, errMsg ...string) ValidatorFunc[T] {
+func MinLen[T ~string | ~[]byte](minLen int, errMsg ...string) ValidatorFunc[T] {
 	return ValidatorFunc[T](func(filed T) error {
 		l := len(filed)
 		if l < minLen {
@@ -17,7 +17,7 @@ func MinLen[T string | []byte](minLen int, errMsg ...string) ValidatorFunc[T] {
 	})
 }
 
-func MaxLen[T string | []byte](maxLen int, errMsg ...string) ValidatorFunc[T] {
+func MaxLen[T ~string | ~[]byte](maxLen int, errMsg ...string) ValidatorFunc[T] {
 	return ValidatorFunc[T](func(filed T) error {
 		l := len(filed)
 		if l > maxLen {
