@@ -5,7 +5,7 @@ import (
 )
 
 func Get[T any](input any, validators ...Validator[T]) (T, error) {
-	return get[T](input, validators...)
+	return get(input, validators...)
 }
 
 func get[T any](input any, validators ...Validator[T]) (T, error) {

@@ -16,13 +16,11 @@ func TestGetNum(t *testing.T) {
 	_, err = Get[float32](numInf, Min(float32(0.1)), Eq(float32(0.12)))
 	assert.NoError(t, err)
 
-	var bytesInf interface{}
-	bytesInf = []byte("abcdefg")
+	bytesInf := []byte("abcdefg")
 	_, err = Get[[]byte](bytesInf, ContainsBytes([]byte("cde")))
 	assert.NoError(t, err)
 
-	var strInf interface{}
-	strInf = []byte("iamlyon")
+	strInf := []byte("iamlyon")
 	_, err = Get[string](strInf)
 	assert.Error(t, err)
 }
