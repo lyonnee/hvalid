@@ -1,8 +1,20 @@
 package special
 
 import (
-	"errors"
+	"fmt"
 	"unicode"
+
+	"github.com/lyonnee/hvalid"
+)
+
+// 预定义错误信息
+const (
+	ErrPasswordTooShort  = "length must be at least %d characters"
+	ErrPasswordTooLong   = "length must be at most %d characters"
+	ErrPasswordNoUpper   = "must contain uppercase letter"
+	ErrPasswordNoLower   = "must contain lowercase letter"
+	ErrPasswordNoNumber  = "must contain number"
+	ErrPasswordNoSpecial = "must contain special character"
 )
 
 // PasswordValidator 密码验证器结构体
@@ -14,35 +26,32 @@ type PasswordValidator[T string] struct {
 	RequireNumber  bool   // 是否需要数字
 	RequireSpecial bool   // 是否需要特殊字符
 	SpecialChars   []rune // 允许的特殊字符列表
+	FieldName      string // 字段名称
 }
 
 // NewPasswordValidator 创建密码验证器
-func NewPasswordValidator(
-	minLen int,
-	maxLen int,
-	reqUpper bool,
-	reqLower bool,
-	reqNumber bool,
-	reqSpecial bool,
-	specialChars []rune, // []rune{'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '?', '/'}
-) *PasswordValidator[string] {
+func NewPasswordValidator(fieldName string) *PasswordValidator[string] {
 	return &PasswordValidator[string]{
-		MinLength:      minLen,
-		MaxLength:      maxLen,
-		RequireUpper:   reqUpper,
-		RequireLower:   reqLower,
-		RequireNumber:  reqNumber,
-		RequireSpecial: reqSpecial,
-		SpecialChars:   specialChars,
+		MinLength:      8,
+		MaxLength:      32,
+		RequireUpper:   true,
+		RequireLower:   true,
+		RequireNumber:  true,
+		RequireSpecial: true,
+		SpecialChars:   []rune{'!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', '|', '\\', ':', ';', '"', '\'', '<', '>', ',', '.', '?', '/'},
+		FieldName:      fieldName,
 	}
 }
 
 func (p *PasswordValidator[T]) Validate(password T) error {
+	validationErr := hvalid.NewValidationError(p.FieldName)
+
+	// 验证长度
 	if len(password) < p.MinLength {
-		return errors.New("密码长度不能小于" + string(p.MinLength))
+		validationErr.AddError(fmt.Sprintf(ErrPasswordTooShort, p.MinLength))
 	}
 	if len(password) > p.MaxLength {
-		return errors.New("密码长度不能大于" + string(p.MaxLength))
+		validationErr.AddError(fmt.Sprintf(ErrPasswordTooLong, p.MaxLength))
 	}
 
 	var (
@@ -52,6 +61,7 @@ func (p *PasswordValidator[T]) Validate(password T) error {
 		hasSpecial bool
 	)
 
+	// 检查字符类型
 	for _, char := range password {
 		switch {
 		case unicode.IsUpper(char):
@@ -65,20 +75,25 @@ func (p *PasswordValidator[T]) Validate(password T) error {
 		}
 	}
 
+	// 验证字符要求
 	if p.RequireUpper && !hasUpper {
-		return errors.New("密码必须包含大写字母")
+		validationErr.AddError(ErrPasswordNoUpper)
 	}
 	if p.RequireLower && !hasLower {
-		return errors.New("密码必须包含小写字母")
+		validationErr.AddError(ErrPasswordNoLower)
 	}
 	if p.RequireNumber && !hasNumber {
-		return errors.New("密码必须包含数字")
+		validationErr.AddError(ErrPasswordNoNumber)
 	}
 	if p.RequireSpecial && !hasSpecial {
-		return errors.New("密码必须包含特殊字符")
+		validationErr.AddError(ErrPasswordNoSpecial)
 	}
 
-	return errors.New("密码格式正确")
+	if validationErr.HasError() {
+		return validationErr
+	}
+
+	return nil
 }
 
 // isSpecialChar 判断字符是否为允许的特殊字符

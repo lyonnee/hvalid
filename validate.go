@@ -12,11 +12,21 @@ func (fn ValidatorFunc[T]) Validate(field T) error {
 	return fn(field)
 }
 
+// Validate 验证字段
 func Validate[T any](field T, validators ...Validator[T]) error {
+	var validationErr *ValidationError
+
 	for _, v := range validators {
 		if err := v.Validate(field); err != nil {
-			return err
+			if validationErr == nil {
+				validationErr = NewValidationError("field")
+			}
+			validationErr.AddError(err.Error())
 		}
+	}
+
+	if validationErr != nil && validationErr.HasError() {
+		return validationErr
 	}
 
 	return nil
