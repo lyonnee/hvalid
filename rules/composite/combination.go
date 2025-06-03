@@ -1,12 +1,14 @@
-package hvalid
+package composite
 
 import (
 	"errors"
 	"reflect"
+
+	"github.com/lyonnee/hvalid"
 )
 
-func Eq[T comparable](comparData T, errMsg ...string) ValidatorFunc[T] {
-	return ValidatorFunc[T](func(data T) error {
+func Eq[T comparable](comparData T, errMsg ...string) hvalid.ValidatorFunc[T] {
+	return hvalid.ValidatorFunc[T](func(data T) error {
 		if data != comparData {
 			if len(errMsg) > 0 {
 				return errors.New(errMsg[0])
@@ -18,8 +20,8 @@ func Eq[T comparable](comparData T, errMsg ...string) ValidatorFunc[T] {
 	})
 }
 
-func Required[T any](errMsg ...string) ValidatorFunc[T] {
-	return ValidatorFunc[T](func(data T) error {
+func Required[T any](errMsg ...string) hvalid.ValidatorFunc[T] {
+	return hvalid.ValidatorFunc[T](func(data T) error {
 		err := errors.New("the value is empty")
 		if len(errMsg) > 0 {
 			err = errors.New(errMsg[0])

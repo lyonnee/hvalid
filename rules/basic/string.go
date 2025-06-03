@@ -1,4 +1,4 @@
-package hvalid
+package basic
 
 import (
 	"errors"
@@ -6,10 +6,12 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/lyonnee/hvalid"
 )
 
-func ContainsStr(substr string, errMsg ...string) ValidatorFunc[string] {
-	return ValidatorFunc[string](func(field string) error {
+func ContainsStr(substr string, errMsg ...string) hvalid.ValidatorFunc[string] {
+	return hvalid.ValidatorFunc[string](func(field string) error {
 		ok := strings.Contains(field, substr)
 		if !ok {
 			if len(errMsg) > 0 {
@@ -22,8 +24,8 @@ func ContainsStr(substr string, errMsg ...string) ValidatorFunc[string] {
 	})
 }
 
-func IsIPv4(errMsg ...string) ValidatorFunc[string] {
-	return ValidatorFunc[string](func(field string) error {
+func IsIPv4(errMsg ...string) hvalid.ValidatorFunc[string] {
+	return hvalid.ValidatorFunc[string](func(field string) error {
 		if checkIPv4(field) {
 			return nil
 		}
@@ -36,8 +38,8 @@ func IsIPv4(errMsg ...string) ValidatorFunc[string] {
 	})
 }
 
-func IsIPv6(errMsg ...string) ValidatorFunc[string] {
-	return ValidatorFunc[string](func(field string) error {
+func IsIPv6(errMsg ...string) hvalid.ValidatorFunc[string] {
+	return hvalid.ValidatorFunc[string](func(field string) error {
 		if checkIPv6(field) {
 			return nil
 		}
@@ -50,8 +52,8 @@ func IsIPv6(errMsg ...string) ValidatorFunc[string] {
 	})
 }
 
-func IsUrl(errMsg ...string) ValidatorFunc[string] {
-	return ValidatorFunc[string](func(field string) error {
+func IsUrl(errMsg ...string) hvalid.ValidatorFunc[string] {
+	return hvalid.ValidatorFunc[string](func(field string) error {
 		err := errors.New("the value not is url")
 		if len(errMsg) > 0 {
 			err = errors.New(errMsg[0])
@@ -75,14 +77,14 @@ func IsUrl(errMsg ...string) ValidatorFunc[string] {
 	})
 }
 
-func IsEmail(errMsg ...string) ValidatorFunc[string] {
-	return ValidatorFunc[string](func(field string) error {
+func IsEmail(errMsg ...string) hvalid.ValidatorFunc[string] {
+	return hvalid.ValidatorFunc[string](func(field string) error {
 		return Regexp(`^([\w\.\_\-]{2,10})@(\w{1,}).([a-z]{2,4})$`, errMsg...)(field)
 	})
 }
 
-func Regexp(pattern string, errMsg ...string) ValidatorFunc[string] {
-	return ValidatorFunc[string](func(field string) error {
+func Regexp(pattern string, errMsg ...string) hvalid.ValidatorFunc[string] {
+	return hvalid.ValidatorFunc[string](func(field string) error {
 		result, _ := regexp.MatchString(pattern, field)
 		if !result {
 			if len(errMsg) > 0 {

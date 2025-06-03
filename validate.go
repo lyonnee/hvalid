@@ -1,5 +1,7 @@
+// Package core provides the core validation interface and implementation
 package hvalid
 
+// ValidatorFunc is the function signature for validation functions
 type Validator[T any] interface {
 	Validate(field T) error
 }

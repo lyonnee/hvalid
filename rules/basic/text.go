@@ -1,11 +1,13 @@
-package hvalid
+package basic
 
 import (
 	"errors"
+
+	"github.com/lyonnee/hvalid"
 )
 
-func MinLen[T string | []byte](minLen int, errMsg ...string) ValidatorFunc[T] {
-	return ValidatorFunc[T](func(filed T) error {
+func MinLen[T string | []byte](minLen int, errMsg ...string) hvalid.ValidatorFunc[T] {
+	return hvalid.ValidatorFunc[T](func(filed T) error {
 		l := len(filed)
 		if l < minLen {
 			if len(errMsg) > 0 {
@@ -17,8 +19,8 @@ func MinLen[T string | []byte](minLen int, errMsg ...string) ValidatorFunc[T] {
 	})
 }
 
-func MaxLen[T string | []byte](maxLen int, errMsg ...string) ValidatorFunc[T] {
-	return ValidatorFunc[T](func(filed T) error {
+func MaxLen[T string | []byte](maxLen int, errMsg ...string) hvalid.ValidatorFunc[T] {
+	return hvalid.ValidatorFunc[T](func(filed T) error {
 		l := len(filed)
 		if l > maxLen {
 			if len(errMsg) > 0 {
