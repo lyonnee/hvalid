@@ -13,11 +13,11 @@ func (fn ValidatorFunc[T]) Validate(field T) error {
 }
 
 // Validate 验证字段
-func Validate[T any](field T, validators ...Validator[T]) error {
+func Validate[T any](field T, validators ...ValidatorFunc[T]) error {
 	var validationErr *ValidationError
 
 	for _, v := range validators {
-		if err := v.Validate(field); err != nil {
+		if err := v(field); err != nil {
 			if validationErr == nil {
 				validationErr = NewValidationError("field")
 			}

@@ -1,8 +1,6 @@
 package primitive
 
 import (
-	"errors"
-
 	"github.com/lyonnee/hvalid"
 )
 
@@ -12,21 +10,39 @@ const (
 	ErrNotFalse = "must be false"
 )
 
+// BooleanValidator 布尔值验证器结构体
+type BooleanValidator struct {
+	FieldName string // 字段名称
+}
+
+// NewBooleanValidator 创建布尔值验证器
+func NewBooleanValidator(fieldName string) *BooleanValidator {
+	return &BooleanValidator{
+		FieldName: fieldName,
+	}
+}
+
 // IsTrue 验证值必须为 true
-func IsTrue() hvalid.ValidatorFunc[bool] {
+func (v *BooleanValidator) IsTrue() hvalid.ValidatorFunc[bool] {
 	return hvalid.ValidatorFunc[bool](func(value bool) error {
+		validationErr := hvalid.NewValidationError(v.FieldName)
+
 		if !value {
-			return errors.New(ErrNotTrue)
+			validationErr.AddError(ErrNotTrue)
+			return validationErr
 		}
 		return nil
 	})
 }
 
 // IsFalse 验证值必须为 false
-func IsFalse() hvalid.ValidatorFunc[bool] {
+func (v *BooleanValidator) IsFalse() hvalid.ValidatorFunc[bool] {
 	return hvalid.ValidatorFunc[bool](func(value bool) error {
+		validationErr := hvalid.NewValidationError(v.FieldName)
+
 		if value {
-			return errors.New(ErrNotFalse)
+			validationErr.AddError(ErrNotFalse)
+			return validationErr
 		}
 		return nil
 	})

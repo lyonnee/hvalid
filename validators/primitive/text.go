@@ -1,8 +1,6 @@
 package primitive
 
 import (
-	"errors"
-
 	"github.com/lyonnee/hvalid"
 )
 
@@ -12,21 +10,41 @@ const (
 	ErrTextTooLong  = "value length too long"
 )
 
-func MinLen[T string | []byte](minLen int) hvalid.ValidatorFunc[T] {
-	return hvalid.ValidatorFunc[T](func(filed T) error {
-		l := len(filed)
+// TextValidator 文本验证器结构体
+type TextValidator[T string | []byte] struct {
+	FieldName string // 字段名称
+}
+
+// NewTextValidator 创建文本验证器
+func NewTextValidator[T string | []byte](fieldName string) *TextValidator[T] {
+	return &TextValidator[T]{
+		FieldName: fieldName,
+	}
+}
+
+// MinLen 验证最小长度
+func (v *TextValidator[T]) MinLen(minLen int) hvalid.ValidatorFunc[T] {
+	return hvalid.ValidatorFunc[T](func(field T) error {
+		validationErr := hvalid.NewValidationError(v.FieldName)
+
+		l := len(field)
 		if l < minLen {
-			return errors.New(ErrTextTooShort)
+			validationErr.AddError(ErrTextTooShort)
+			return validationErr
 		}
 		return nil
 	})
 }
 
-func MaxLen[T string | []byte](maxLen int) hvalid.ValidatorFunc[T] {
-	return hvalid.ValidatorFunc[T](func(filed T) error {
-		l := len(filed)
+// MaxLen 验证最大长度
+func (v *TextValidator[T]) MaxLen(maxLen int) hvalid.ValidatorFunc[T] {
+	return hvalid.ValidatorFunc[T](func(field T) error {
+		validationErr := hvalid.NewValidationError(v.FieldName)
+
+		l := len(field)
 		if l > maxLen {
-			return errors.New(ErrTextTooLong)
+			validationErr.AddError(ErrTextTooLong)
+			return validationErr
 		}
 		return nil
 	})
