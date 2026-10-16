@@ -11,12 +11,10 @@ import (
 
 // 预定义错误信息
 const (
-	ErrStringNotContains = "must contain the sub string"
-	ErrNotIPv4           = "must be a valid IPv4 address"
-	ErrNotIPv6           = "must be a valid IPv6 address"
-	ErrNotURL            = "must be a valid URL"
-	ErrNotEmail          = "must be a valid email address"
-	ErrNotMatchPattern   = "must match the required pattern"
+	ErrNotIPv4  = "must be a valid IPv4 address"
+	ErrNotIPv6  = "must be a valid IPv6 address"
+	ErrNotURL   = "must be a valid URL"
+	ErrNotEmail = "must be a valid email address"
 )
 
 // StringValidator 字符串验证器结构体
@@ -29,19 +27,6 @@ func NewStringValidator(fieldName string) *StringValidator {
 	return &StringValidator{
 		FieldName: fieldName,
 	}
-}
-
-// ContainsStr 验证字符串是否包含子串
-func (v *StringValidator) ContainsStr(substr string) hvalid.ValidatorFunc[string] {
-	return hvalid.ValidatorFunc[string](func(field string) error {
-		validationErr := hvalid.NewValidationError(v.FieldName)
-
-		if !strings.Contains(field, substr) {
-			validationErr.AddError(ErrStringNotContains)
-			return validationErr
-		}
-		return nil
-	})
 }
 
 // IsIPv4 验证是否为IPv4地址
@@ -104,20 +89,6 @@ func (v *StringValidator) IsEmail() hvalid.ValidatorFunc[string] {
 		result, _ := regexp.MatchString(`^([\w\.\_\-]{2,10})@(\w{1,}).([a-z]{2,4})$`, field)
 		if !result {
 			validationErr.AddError(ErrNotEmail)
-			return validationErr
-		}
-		return nil
-	})
-}
-
-// Regexp 使用正则表达式验证
-func (v *StringValidator) Regexp(pattern string) hvalid.ValidatorFunc[string] {
-	return hvalid.ValidatorFunc[string](func(field string) error {
-		validationErr := hvalid.NewValidationError(v.FieldName)
-
-		result, _ := regexp.MatchString(pattern, field)
-		if !result {
-			validationErr.AddError(ErrNotMatchPattern)
 			return validationErr
 		}
 		return nil

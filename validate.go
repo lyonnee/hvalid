@@ -1,7 +1,7 @@
-// Package core provides the core validation interface and implementation
+// Package hvalid 判断一个值是否符合调用方给出的规则。
 package hvalid
 
-// ValidatorFunc is the function signature for validation functions
+// Validator 是规则的运行方式。
 type Validator[T any] interface {
 	Validate(field T) error
 }
@@ -12,14 +12,14 @@ func (fn ValidatorFunc[T]) Validate(field T) error {
 	return fn(field)
 }
 
-// Validate 验证字段
-func Validate[T any](field T, validators ...ValidatorFunc[T]) error {
+// Validate 用 name 运行全部规则，把每条失败原因收成一条错误。
+func Validate[T any](name string, value T, rules ...ValidatorFunc[T]) error {
 	var validationErr *ValidationError
 
-	for _, v := range validators {
-		if err := v(field); err != nil {
+	for _, rule := range rules {
+		if err := rule(value); err != nil {
 			if validationErr == nil {
-				validationErr = NewValidationError("field")
+				validationErr = NewValidationError(name)
 			}
 			validationErr.AddError(err.Error())
 		}

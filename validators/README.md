@@ -4,13 +4,8 @@ HValid 验证器库提供全面的数据验证功能。
 
 ## 目录结构
 
-- `primitive/`: 基础验证器，提供基本的验证功能
-  - `boolean.go`: 布尔值验证器
-  - `bytes.go`: 字节切片验证器
-  - `number.go`: 数字验证器
-  - `slice.go`: 切片验证器
-  - `text.go`: 文本验证器
-  - `time.go`: 时间验证器
+- `primitive/`: 字符串格式检查（邮箱、IPv4、IPv6、URL）。长度、数值、切片、map、布尔和时间规则在 package `hvalid`。
+  - `string.go`: 邮箱、IPv4、IPv6、URL
 
 - `common/`: 通用验证器，提供常用的验证功能
   - `creditcard.go`: 信用卡号验证器
@@ -26,15 +21,12 @@ HValid 验证器库提供全面的数据验证功能。
 
 ```go
 import (
-    "github.com/lyonnee/hvalid/validators/primitive"
+    "github.com/lyonnee/hvalid"
     "github.com/lyonnee/hvalid/validators/common"
 )
 
-// 使用基础验证器
-textValidator := primitive.NewTextValidator("name")
-err := textValidator.Required()("John")
+err := hvalid.Validate("name", "John", hvalid.MinLen[string](1))
 
-// 使用通用验证器
 emailValidator := common.NewEmailValidator("email")
 err = emailValidator.Validate()("user@example.com")
 ```

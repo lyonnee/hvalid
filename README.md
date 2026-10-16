@@ -32,19 +32,18 @@ go get github.com/lyonnee/hvalid
 
 ```go
 import (
-	"errors"
 	"github.com/lyonnee/hvalid"
 )
 
 func main() {
 	// Validate string length
-	err := hvalid.Validate[string]("hello", hvalid.MinLen[string](3))
+	err := hvalid.Validate("name", "hello", hvalid.MinLen[string](3))
 	if err != nil {
 		// Handle error
 	}
 
 	// Validate number range
-	err = hvalid.Validate[int](10, hvalid.Min(5), hvalid.Max(15))
+	err = hvalid.Validate("count", 10, hvalid.Min(5), hvalid.Max(15))
 	if err != nil {
 		// Handle error
 	}
@@ -55,29 +54,26 @@ func main() {
 
 ```go
 type User struct {
-	Name  string
-	Email string
-	Age   int
+	Name string
+	Age  int
 }
 
 func UserValidator() hvalid.ValidatorFunc[User] {
-	return hvalid.ValidatorFunc[User](func(user User) error {
-		if user.Age < 18 {
-			return errors.New("Age must be greater than 18")
+	return func(user User) error {
+		if err := hvalid.Validate("name", user.Name, hvalid.MinLen[string](1)); err != nil {
+			return err
 		}
-
-		return hvalid.Validate[string](user.Email, hvalid.Email())
-	})
+		return hvalid.Validate("age", user.Age, hvalid.Min(18))
+	}
 }
 
 func main() {
 	user := User{
-		Name:  "Zhang San",
-		Email: "zhangsan@example.com",
-		Age:   20,
+		Name: "Zhang San",
+		Age:  20,
 	}
 
-	err := hvalid.Validate[User](user, UserValidator())
+	err := UserValidator()(user)
 	if err != nil {
 		// Handle error
 	}
@@ -87,20 +83,19 @@ func main() {
 #### Custom Validation Rules
 
 ```go
-func IsPositive(errMsg ...string) hvalid.ValidatorFunc[int] {
-	return hvalid.ValidatorFunc[int](func(num int) error {
+import "errors"
+
+func IsPositive() hvalid.ValidatorFunc[int] {
+	return func(num int) error {
 		if num <= 0 {
-			if len(errMsg) > 0 {
-				return errors.New(errMsg[0])
-			}
 			return errors.New("The number must be positive")
 		}
 		return nil
-	})
+	}
 }
 
 func main() {
-	err := hvalid.Validate[int](10, IsPositive())
+	err := hvalid.Validate("n", 10, IsPositive())
 	if err != nil {
 		// Handle error
 	}
