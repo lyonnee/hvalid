@@ -5,7 +5,7 @@
 | [English](README.md) | 中文 |
 | --- | --- |
 
-用 Go 写的轻量校验库。
+`hvalid` 是一个用 Go 编写的轻量级验证库。它定义了规则类型，并提供一组通用规则，帮助开发者快速完成数据校验。
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/lyonnee/hvalid)](https://goreportcard.com/report/github.com/lyonnee/hvalid)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/lyonnee/hvalid)
@@ -13,7 +13,14 @@
 
 </div>
 
-字段名只传一次。每条规则只判断值是否通过。失败时 `Validate` 返回一条错误，里面有字段名，以及全部原因。
+## 特性
+
+- **支持泛型。** 可以校验数值、文本、切片、map、时间，以及 `type Age int` 这样的定义类型。结构体由你为它写的规则来校验。
+- **易于使用。** 字段名只传给 `Validate` 一次，然后再传入规则。规则本身不携带字段名。
+- **可扩展。** 自定义规则和内置规则是同一种类型，可以一起传给 `Validate`。
+- **错误信息友好。** 校验失败时返回一条错误。其中有字段名，以及全部失败原因，方便定位问题。
+
+校验失败时的文本像这样：
 
 ```text
 name: value length too short

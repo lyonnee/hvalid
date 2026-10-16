@@ -5,7 +5,7 @@
 | English | [中文](README_zh.md) |
 | --- | --- |
 
-A small Go library for checking a value against rules.
+`hvalid` is a lightweight validation library written in Go. It defines a rule type and ships common rules, so you can check data quickly.
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/lyonnee/hvalid)](https://goreportcard.com/report/github.com/lyonnee/hvalid)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/lyonnee/hvalid)
@@ -13,7 +13,14 @@ A small Go library for checking a value against rules.
 
 </div>
 
-Pass the field name once. Each rule only decides whether the value passes. On failure, `Validate` returns one error that names the field and lists every reason.
+## Features
+
+- **Generics.** Check numbers, text, slices, maps, times, and defined types such as `type Age int`. A struct is checked by a rule you write for that struct.
+- **Small call.** Pass the field name once to `Validate`, then pass the rules. A rule does not carry the field name.
+- **Extensible.** A custom rule has the same type as a built-in rule, so both can be passed to `Validate`.
+- **Clear errors.** Failure returns one error. It names the field and lists every reason.
+
+A failed check looks like this:
 
 ```text
 name: value length too short
