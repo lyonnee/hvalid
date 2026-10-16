@@ -1,56 +1,55 @@
 <div align="center">
-</br>
 
 # hvalid
 
 | English | [中文](README_zh.md) |
 | --- | --- |
 
-`hvalid` is a lightweight validation library written in Go language. It provides a custom validator interface and a series of common validation functions to help developers quickly implement data validation.
-
-</div>
+A small Go library for checking a value against rules.
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/lyonnee/hvalid)](https://goreportcard.com/report/github.com/lyonnee/hvalid)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/lyonnee/hvalid)
 [![codecov](https://codecov.io/gh/lyonnee/hvalid/graph/badge.svg?token=2LT7V180W9)](https://codecov.io/gh/lyonnee/hvalid)
 
-## Features
-- Generic support: Can validate any type of data, including basic types, structs, slices, etc.
-- Easy to use: Offers a concise API for developers to quickly perform parameter validation.
-- Extensible: Allows custom validation rules to meet different validation needs.
-- Friendly error messages: Returns clear error messages when validation fails, making it easy for developers to locate issues.
+</div>
 
-## Installation
-Install using the `go get` command:
+Pass the field name once. Each rule only decides whether the value passes. On failure, `Validate` returns one error that names the field and lists every reason.
+
+```text
+name: value length too short
+count: must be greater than or equal to 1; must be less than or equal to 10
+```
+
+## Install
+
 ```bash
 go get github.com/lyonnee/hvalid
 ```
 
-### Usage Examples
-
-#### Basic Type Validation
+## Check one value
 
 ```go
-import (
-	"github.com/lyonnee/hvalid"
-)
+import "github.com/lyonnee/hvalid"
 
-func main() {
-	// Validate string length
-	err := hvalid.Validate("name", "hello", hvalid.MinLen[string](3))
-	if err != nil {
-		// Handle error
-	}
+err := hvalid.Validate("name", "hi", hvalid.MinLen[string](3))
+// name: value length too short
 
-	// Validate number range
-	err = hvalid.Validate("count", 10, hvalid.Min(5), hvalid.Max(15))
-	if err != nil {
-		// Handle error
-	}
-}
+err = hvalid.Validate("count", 10, hvalid.Min(5), hvalid.Max(15))
 ```
 
-#### Struct Validation
+`Validate` runs every rule. Reasons are joined with `"; "`. A direct call such as `hvalid.Min(5)(4)` returns only `must be greater than or equal to 5`, because no field name was given.
+
+Defined types use the same rules:
+
+```go
+type Age int
+
+err := hvalid.Validate("age", Age(17), hvalid.Min[Age](18))
+```
+
+## Check a struct
+
+Write a rule for the struct and call `Validate` once per field. Return that error as-is so the field name stays intact.
 
 ```go
 type User struct {
@@ -58,7 +57,7 @@ type User struct {
 	Age  int
 }
 
-func UserValidator() hvalid.ValidatorFunc[User] {
+func UserRule() hvalid.ValidatorFunc[User] {
 	return func(user User) error {
 		if err := hvalid.Validate("name", user.Name, hvalid.MinLen[string](1)); err != nil {
 			return err
@@ -67,49 +66,59 @@ func UserValidator() hvalid.ValidatorFunc[User] {
 	}
 }
 
-func main() {
-	user := User{
-		Name: "Zhang San",
-		Age:  20,
-	}
-
-	err := UserValidator()(user)
-	if err != nil {
-		// Handle error
-	}
-}
+err := UserRule()(User{Name: "Zhang San", Age: 20})
 ```
 
-#### Custom Validation Rules
+## Custom rules
+
+A custom rule is the same type as a built-in one. Its error text becomes one reason.
 
 ```go
 import "errors"
 
 func IsPositive() hvalid.ValidatorFunc[int] {
-	return func(num int) error {
-		if num <= 0 {
-			return errors.New("The number must be positive")
+	return func(n int) error {
+		if n <= 0 {
+			return errors.New("must be positive")
 		}
 		return nil
 	}
 }
 
-func main() {
-	err := hvalid.Validate("n", 10, IsPositive())
-	if err != nil {
-		// Handle error
-	}
-}
+err := hvalid.Validate("n", 0, IsPositive())
+// n: must be positive
 ```
 
-## Testing
-The project includes unit tests, run all tests with the `go test` command:
+## Rules
+
+| Rule | Value |
+| --- | --- |
+| `Min`, `Max`, `Range`, `Positive`, `Negative` | numbers, including defined numeric types |
+| `MinLen`, `MaxLen` | `string`, `[]byte`, and defined text types |
+| `MinItems`, `MaxItems`, `NotEmpty`, `Empty`, `Contains` | slices |
+| `MinSize`, `MaxSize`, `MapNotEmpty`, `MapEmpty`, `HasKey`, `NoKey` | maps |
+| `IsTrue`, `IsFalse` | `bool` |
+| `Before`, `After`, `Equal`, `Between` | `time.Time` |
+| `ContainsStr`, `Regexp` | `string` |
+| `ContainsBytes` | `[]byte` |
+| `Eq` | any value |
+
+`MinLen` is for text. Slice length is `MinItems`.
+
+Email, IPv4, IPv6, and URL checks live in `validators/primitive` and already include a field name, so call them directly:
+
+```go
+import "github.com/lyonnee/hvalid/validators/primitive"
+
+err := primitive.NewStringValidator("email").IsEmail()("user@example.com")
+```
+
+## Test
+
 ```bash
 go test ./...
 ```
 
-## Contributing
-Issues and pull requests are welcome to improve `hvalid`.
-
 ## License
-`hvalid` is released under the MIT License. See the [LICENSE](LICENSE) file for more information.
+
+MIT. See [LICENSE](LICENSE).
