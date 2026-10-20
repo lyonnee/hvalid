@@ -37,6 +37,14 @@ func TestMinLen(t *testing.T) {
 	requireErr(t, MinLen[Name](1)(Name("")), "value length too short")
 
 	requireErr(t, Validate("name", "ab", MinLen[string](3)), "name: value length too short")
+
+	requireNil(t, MinRunes[string](1)("你"))
+	requireErr(t, MinRunes[string](2)("你"), "value rune length too short")
+	requireNil(t, MinRunes[string](-1)(""))
+	requireNil(t, MaxRunes[string](1)("你"))
+	requireErr(t, MaxRunes[string](0)("你"), "value rune length too long")
+	requireErr(t, MaxRunes[string](-1)(""), "value rune length too long")
+	requireNil(t, MinRunes[Name](1)(Name("a")))
 }
 
 func TestNumber(t *testing.T) {
@@ -144,4 +152,30 @@ func TestValidateCollectsReasons(t *testing.T) {
 	}
 
 	requireNil(t, Validate("n", 1))
+}
+
+func TestExistingPublicSeams(t *testing.T) {
+	got, err := Get[int](1, Min(1))
+	requireNil(t, err)
+	if got != 1 {
+		t.Fatalf("got %d", got)
+	}
+
+	_, err = Get[int](0, Min(1))
+	requireErr(t, err, "must be greater than or equal to 1")
+
+	_, err = Get[int]("x")
+	requireErr(t, err, "type not match")
+
+	rule := ValidatorFunc[int](Min(1))
+	requireErr(t, rule.Validate(0), "must be greater than or equal to 1")
+
+	if got := GetDefaultErrorMsg("name", "required"); got != "name required" {
+		t.Fatalf("got %q", got)
+	}
+
+	empty := NewValidationError("n")
+	if empty.Error() != "" {
+		t.Fatalf("got %q", empty.Error())
+	}
 }

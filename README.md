@@ -101,16 +101,24 @@ err := hvalid.Validate("n", 0, IsPositive())
 | Rule | Value |
 | --- | --- |
 | `Min`, `Max`, `Range`, `Positive`, `Negative` | numbers, including defined numeric types |
-| `MinLen`, `MaxLen` | `string`, `[]byte`, and defined text types |
+| `MinLen`, `MaxLen`, `MinRunes`, `MaxRunes` | `string`, `[]byte`, and defined text types. `MinRunes` and `MaxRunes` are `string` only |
 | `MinItems`, `MaxItems`, `NotEmpty`, `Empty`, `Contains` | slices |
 | `MinSize`, `MaxSize`, `MapNotEmpty`, `MapEmpty`, `HasKey`, `NoKey` | maps |
 | `IsTrue`, `IsFalse` | `bool` |
 | `Before`, `After`, `Equal`, `Between` | `time.Time` |
-| `ContainsStr`, `Regexp` | `string` |
+| `ContainsStr`, `Regexp`, `ASCII`, `PrintableASCII`, `Alpha`, `Alphanumeric`, `Hex`, `Digits`, `Integer`, `Decimal`, `UTFLetter`, `UTFLetterNumeric`, `UTFNumeric`, `UTFDigit`, `Lower`, `Upper`, `HasLower`, `HasUpper`, `HasSpace`, `SpaceOnly`, `Blank`, `NotBlank`, `OneOf` | `string`, including defined text types |
 | `ContainsBytes` | `[]byte` |
 | `Eq` | any value |
 
 `MinLen` is for text. Slice length is `MinItems`.
+
+UUID, ULID, JSON, Base64, data URI, MAC, DNS name, host, port, MongoDB id, JWT, semver, colors, latitude, longitude, RFC3339, Unix time, `YYYYMMDD`, ISBN, ISO 3166-1 alpha-2, and ISO 4217 live in `validators/format`. Those rules do not carry a field name:
+
+```go
+import "github.com/lyonnee/hvalid/validators/format"
+
+err := hvalid.Validate("country", "CN", format.ISO3166Alpha2[string]())
+```
 
 Email, IPv4, IPv6, and URL checks live in `validators/primitive` and already include a field name, so call them directly:
 

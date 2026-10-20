@@ -101,16 +101,24 @@ err := hvalid.Validate("n", 0, IsPositive())
 | 规则 | 适用的值 |
 | --- | --- |
 | `Min`、`Max`、`Range`、`Positive`、`Negative` | 数值，含数值定义类型 |
-| `MinLen`、`MaxLen` | `string`、`[]byte`，以及文本定义类型 |
+| `MinLen`、`MaxLen`、`MinRunes`、`MaxRunes` | `string`、`[]byte`，以及文本定义类型。`MinRunes` 与 `MaxRunes` 只用于 `string` |
 | `MinItems`、`MaxItems`、`NotEmpty`、`Empty`、`Contains` | 切片 |
 | `MinSize`、`MaxSize`、`MapNotEmpty`、`MapEmpty`、`HasKey`、`NoKey` | map |
 | `IsTrue`、`IsFalse` | `bool` |
 | `Before`、`After`、`Equal`、`Between` | `time.Time` |
-| `ContainsStr`、`Regexp` | `string` |
+| `ContainsStr`、`Regexp`、`ASCII`、`PrintableASCII`、`Alpha`、`Alphanumeric`、`Hex`、`Digits`、`Integer`、`Decimal`、`UTFLetter`、`UTFLetterNumeric`、`UTFNumeric`、`UTFDigit`、`Lower`、`Upper`、`HasLower`、`HasUpper`、`HasSpace`、`SpaceOnly`、`Blank`、`NotBlank`、`OneOf` | `string`，以及文本定义类型 |
 | `ContainsBytes` | `[]byte` |
 | `Eq` | 任意值 |
 
 `MinLen` 用于文本。切片长度用 `MinItems`。
+
+UUID、ULID、JSON、Base64、data URI、MAC、DNS 名、主机、端口、MongoDB id、JWT、语义化版本、颜色、纬度、经度、RFC3339、Unix 时间、`YYYYMMDD`、ISBN、ISO 3166-1 alpha-2 和 ISO 4217 在 `validators/format`。这些规则不带字段名：
+
+```go
+import "github.com/lyonnee/hvalid/validators/format"
+
+err := hvalid.Validate("country", "CN", format.ISO3166Alpha2[string]())
+```
 
 邮箱、IPv4、IPv6 和 URL 在 `validators/primitive`，自身已经带字段名，直接调用：
 

@@ -1,0 +1,48 @@
+package format
+
+import (
+	"errors"
+	"strings"
+
+	"github.com/lyonnee/hvalid"
+)
+
+// ISO 4217 alphabetic codes in circulation, including funds and precious-metal codes. Snapshot 2026-10-19.
+var iso4217 = codeSet(`
+AED AFN ALL AMD ANG AOA ARS AUD AWG AZN
+BAM BBD BDT BGN BHD BIF BMD BND BOB BOV BRL BSD BTN BWP BYN BZD
+CAD CDF CHE CHF CHW CLF CLP CNY COP COU CRC CUP CVE CZK
+DJF DKK DOP DZD
+EGP ERN ETB EUR
+FJD FKP
+GBP GEL GHS GIP GMD GNF GTQ GYD
+HKD HNL HTG HUF
+IDR ILS INR IQD IRR ISK
+JMD JOD JPY
+KES KGS KHR KMF KPW KRW KWD KYD KZD
+LAK LBP LKR LRD LSL LYD
+MAD MDL MGA MKD MMK MNT MOP MRU MUR MVR MWK MXN MXV MYR MZN
+NAD NGN NIO NOK NPR NZD
+OMR
+PAB PEN PGK PHP PKR PLN PYG
+QAR
+RON RSD RUB RWF
+SAR SBD SCR SDG SEK SGD SHP SLE SOS SRD SSP STN SVC SYP SZL
+THB TJS TMT TND TOP TRY TTD TWD TZS
+UAH UGX USD USN UYI UYU UYW UZS
+VED VES VND VUV
+WST
+XAF XAG XAU XBA XBB XBC XBD XCD XDR XOF XPD XPF XPT XSU XTS XUA XXX
+YER
+ZAR ZMW ZWL
+`)
+
+// ISO4217 要求现行 ISO 4217 字母代码，大小写不敏感。
+func ISO4217[T ~string]() hvalid.ValidatorFunc[T] {
+	return func(value T) error {
+		if _, ok := iso4217[strings.ToUpper(string(value))]; !ok {
+			return errors.New("must be an ISO 4217 code")
+		}
+		return nil
+	}
+}
